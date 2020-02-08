@@ -5,13 +5,14 @@ use chrono::{DateTime, Local};
 
 extern crate libc;
 use libc::{c_void, c_int};
-// use libc::{time_t, c_int};
 
-use std::fs::File;
+use std::fs::{OpenOptions};
 use std::io::prelude::*;
 
 const SLURM_SUCCESS: c_int = 0;
 const SLURM_FAILURE: c_int = -1;
+
+const JOB_SUBMIT_FILE: &str = "job_submit_rust.log";
 
 // Export strings for plugin interface
 // https://users.rust-lang.org/t/how-to-export-string-symbol-not-function-to-c/26039
@@ -32,14 +33,19 @@ pub static plugin_version: u32 = 0x140200; /* i.e. Slurm 20.02.0 */
 #[no_mangle]
 pub extern "C" fn job_submit(_job_desc: *mut c_void, submit_uid: u32,
                              _err_msg: *mut c_void) -> c_int {
-    println!("Rust has infected Slurm! Submitted by user {}", submit_uid);
-    let file = File::create("job_submit_rust.log");
-    let now: DateTime<Local> = Local::now();
+    println!("Rust has infected Slurm! Submitted by user {}\n", submit_uid);
+
+    let file = OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open(JOB_SUBMIT_FILE);
     let mut file = match file {
         Ok(file) => file,
         Err(_) => return SLURM_FAILURE,
     };
-    let result = write!(file, "{}: Rust's job_submit has been called from Slurm! uid={}", now, submit_uid);
+
+    let now: DateTime<Local> = Local::now();
+    let result = write!(file, "{}: Job Submit Rust: Slurm has called job_submit() in Rust! uid={}\n", now, submit_uid);
     match result {
         Ok(_) => {},
         Err(_) => return SLURM_FAILURE,
@@ -54,14 +60,19 @@ pub extern "C" fn job_submit(_job_desc: *mut c_void, submit_uid: u32,
 #[no_mangle]
 pub extern "C" fn job_modify(_job_desc: *mut c_void, _job_ptr: *mut c_void,
                              submit_uid: u32) -> c_int {
-    println!("Rust has infected Slurm! Modified by user {}", submit_uid);
-    let file = File::create("job_submit_rust.log");
-    let now: DateTime<Local> = Local::now();
+    println!("Rust has infected Slurm! Modified by user {}\n", submit_uid);
+
+    let file = OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open(JOB_SUBMIT_FILE);
     let mut file = match file {
         Ok(file) => file,
         Err(_) => return SLURM_FAILURE,
     };
-    let result = write!(file, "{}: Rust's job_modify has been called from Slurm! uid={}", now, submit_uid);
+
+    let now: DateTime<Local> = Local::now();
+    let result = write!(file, "{}: Job Submit Rust: Slurm has called job_modify() in Rust! uid={}\n", now, submit_uid);
     match result {
         Ok(_) => {},
         Err(_) => return SLURM_FAILURE,
@@ -71,10 +82,41 @@ pub extern "C" fn job_modify(_job_desc: *mut c_void, _job_ptr: *mut c_void,
 
 #[no_mangle]
 pub extern "C" fn fini() {
+    let file = OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open(JOB_SUBMIT_FILE);
+    let mut file = match file {
+        Ok(file) => file,
+        Err(_) => return,
+    };
+
+    let now: DateTime<Local> = Local::now();
+    let result = write!(file, "{}: Job Submit Rust: fini\n", now);
+    match result {
+        Ok(_) => {},
+        Err(_) => return,
+    };
 }
 
 #[no_mangle]
 pub extern "C" fn init() -> c_int {
+    let file = OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open(JOB_SUBMIT_FILE);
+    let mut file = match file {
+        Ok(file) => file,
+        Err(_) => return SLURM_FAILURE,
+    };
+
+    let now: DateTime<Local> = Local::now();
+    let result = write!(file, "{}: Job Submit Rust: init\n", now);
+    match result {
+        Ok(_) => {},
+        Err(_) => return SLURM_FAILURE,
+    };
+
     SLURM_SUCCESS
 }
 
