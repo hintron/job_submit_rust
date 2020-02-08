@@ -1,5 +1,7 @@
+// https://rust-lang-nursery.github.io/rust-cookbook/datetime/parse.html#convert-date-to-unix-timestamp-and-vice-versa
+// https://docs.rs/chrono/0.4.10/chrono/
 extern crate chrono;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Local};
 
 extern crate libc;
 use libc::{c_void, c_int};
@@ -29,7 +31,7 @@ pub extern "C" fn job_submit(_job_desc: *mut c_void, submit_uid: u32,
                              _err_msg: *mut c_void) -> c_int {
     println!("Rust has infected Slurm! Submitted by user {}", submit_uid);
     let file = File::create("job_submit_rust.log");
-    let now: DateTime<Utc> = Utc::now();
+    let now: DateTime<Local> = Local::now();
     let mut file = match file {
         Ok(file) => file,
         Err(_) => return -1,
@@ -51,7 +53,7 @@ pub extern "C" fn job_modify(_job_desc: *mut c_void, _job_ptr: *mut c_void,
                              submit_uid: u32) -> c_int {
     println!("Rust has infected Slurm! Modified by user {}", submit_uid);
     let file = File::create("job_submit_rust.log");
-    let now: DateTime<Utc> = Utc::now();
+    let now: DateTime<Local> = Local::now();
     let mut file = match file {
         Ok(file) => file,
         Err(_) => return -1,
