@@ -1,0 +1,18 @@
+[package]
+name = "job_submit_rust"
+version = "0.1.0"
+authors = ["Michael Hinton <hiniton@schedmd.com>"]
+edition = "2018"
+
+
+[lib]
+name = "job_submit_rustraw"
+crate-type = ["cdylib"]
+# crate-type = ["dylib"]
+# https://doc.rust-lang.org/cargo/reference/manifest.html#building-dynamic-or-static-libraries
+# https://doc.rust-lang.org/cargo/reference/manifest.html#configuring-a-target
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
