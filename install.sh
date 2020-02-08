@@ -17,12 +17,10 @@ if [ "$prefix" != "" ]; then
     target_destination="$prefix/lib/slurm/$name"
 fi
 
-echo "installing $target_destination"
-
-
 # Cargo can't rename libs or give it an soname, so do it manually here
 # https://github.com/rust-lang/cargo/issues/1970
 # https://stackoverflow.com/questions/18467163/is-there-any-way-to-change-the-soname-of-a-binary-directly
 patchelf --set-soname $name $target
 
+echo "installing $target_destination"
 cp "$target" "$target_destination"
