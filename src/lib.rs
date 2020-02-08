@@ -1,3 +1,9 @@
+extern crate libc;
+use libc::{c_void, c_int};
+// use libc::{time_t, c_int};
+
+use std::fs::File;
+use std::io::prelude::*;
 
 // Export strings for plugin interface
 // https://users.rust-lang.org/t/how-to-export-string-symbol-not-function-to-c/26039
@@ -12,18 +18,36 @@ pub static plugin_type: [u8; 16] = *b"job_submit/rust\0";
 #[used]
 pub static plugin_version: u32 = 0x140200; /* i.e. Slurm 20.02.0 */
 
-// extern int job_submit(job_desc_msg_t *job_desc, uint32_t submit_uid,
-//               char **err_msg)
+// C prototype:
+// extern int job_submit(job_desc_msg_t *job_desc, u32 submit_uid,
+//               u8 **err_msg)
 #[no_mangle]
-pub extern "C" fn job_submit() {
-    println!("Rust has infected Slurm!");
+pub extern "C" fn job_submit(_job_desc: *mut c_void, submit_uid: u32,
+                             _err_msg: *mut c_void) -> c_int {
+    println!("Rust has infected Slurm! Submitted by user {}", submit_uid);
+    let file = File::create("job_submit_rust.log");
+    let mut file = match file {
+        Ok(file) => file,
+        Err(_) => return -1,
+    };
+    let result = write!(file, "Rust has been called from Slurm! uid={}", submit_uid);
+    match result {
+        Ok(_) => return 0,
+        Err(_) => return -1,
+    };
 }
 
+// C prototype:
 // extern int job_modify(job_desc_msg_t *job_desc, job_record_t *job_ptr,
-//               uint32_t submit_uid)
+//               u32 submit_uid)
 #[no_mangle]
-pub extern "C" fn job_modify() {
-    println!("Rust has infected Slurm!");
+pub extern "C" fn job_modify(_job_desc: *mut c_void, _job_ptr: *mut c_void,
+                             submit_uid: u32) -> c_int {
+    println!("Rust has infected Slurm! Submitted by user {}", submit_uid);
+    // let mut file = File::create("job_submit_rust.log")?;
+    // write!(file, "Rust has been called from Slurm! uid={}", submit_uid)?;
+    // file.write_all(b"Rust has been called from Slurm! uid={}", submit_uid)?;
+    0
 }
 
 

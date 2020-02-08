@@ -16,3 +16,6 @@ crate-type = ["cdylib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# https://doc.rust-lang.org/nomicon/ffi.html
+# https://docs.rs/libc/0.2.66/libc/
+libc = "0.2"
