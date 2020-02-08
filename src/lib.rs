@@ -10,6 +10,9 @@ use libc::{c_void, c_int};
 use std::fs::File;
 use std::io::prelude::*;
 
+const SLURM_SUCCESS: c_int = 0;
+const SLURM_FAILURE: c_int = -1;
+
 // Export strings for plugin interface
 // https://users.rust-lang.org/t/how-to-export-string-symbol-not-function-to-c/26039
 // https://stackoverflow.com/questions/31701655/can-a-rust-constant-static-be-exposed-to-c
@@ -34,15 +37,15 @@ pub extern "C" fn job_submit(_job_desc: *mut c_void, submit_uid: u32,
     let now: DateTime<Local> = Local::now();
     let mut file = match file {
         Ok(file) => file,
-        Err(_) => return -1,
+        Err(_) => return SLURM_FAILURE,
     };
     let result = write!(file, "{}: Rust's job_submit has been called from Slurm! uid={}", now, submit_uid);
     match result {
         Ok(_) => {},
-        Err(_) => return -1,
+        Err(_) => return SLURM_FAILURE,
     };
 
-    0
+    SLURM_SUCCESS
 }
 
 // C prototype:
@@ -56,14 +59,14 @@ pub extern "C" fn job_modify(_job_desc: *mut c_void, _job_ptr: *mut c_void,
     let now: DateTime<Local> = Local::now();
     let mut file = match file {
         Ok(file) => file,
-        Err(_) => return -1,
+        Err(_) => return SLURM_FAILURE,
     };
     let result = write!(file, "{}: Rust's job_modify has been called from Slurm! uid={}", now, submit_uid);
     match result {
         Ok(_) => {},
-        Err(_) => return -1,
+        Err(_) => return SLURM_FAILURE,
     };
-    0
+    SLURM_SUCCESS
 }
 
 // #[cfg(test)]
