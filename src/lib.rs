@@ -1,3 +1,6 @@
+extern crate chrono;
+use chrono::{DateTime, Utc};
+
 extern crate libc;
 use libc::{c_void, c_int};
 // use libc::{time_t, c_int};
@@ -26,15 +29,18 @@ pub extern "C" fn job_submit(_job_desc: *mut c_void, submit_uid: u32,
                              _err_msg: *mut c_void) -> c_int {
     println!("Rust has infected Slurm! Submitted by user {}", submit_uid);
     let file = File::create("job_submit_rust.log");
+    let now: DateTime<Utc> = Utc::now();
     let mut file = match file {
         Ok(file) => file,
         Err(_) => return -1,
     };
-    let result = write!(file, "Rust has been called from Slurm! uid={}", submit_uid);
+    let result = write!(file, "{}: Rust's job_submit has been called from Slurm! uid={}", now, submit_uid);
     match result {
-        Ok(_) => return 0,
+        Ok(_) => {},
         Err(_) => return -1,
     };
+
+    0
 }
 
 // C prototype:
@@ -43,20 +49,20 @@ pub extern "C" fn job_submit(_job_desc: *mut c_void, submit_uid: u32,
 #[no_mangle]
 pub extern "C" fn job_modify(_job_desc: *mut c_void, _job_ptr: *mut c_void,
                              submit_uid: u32) -> c_int {
-    println!("Rust has infected Slurm! Submitted by user {}", submit_uid);
-    // let mut file = File::create("job_submit_rust.log")?;
-    // write!(file, "Rust has been called from Slurm! uid={}", submit_uid)?;
-    // file.write_all(b"Rust has been called from Slurm! uid={}", submit_uid)?;
+    println!("Rust has infected Slurm! Modified by user {}", submit_uid);
+    let file = File::create("job_submit_rust.log");
+    let now: DateTime<Utc> = Utc::now();
+    let mut file = match file {
+        Ok(file) => file,
+        Err(_) => return -1,
+    };
+    let result = write!(file, "{}: Rust's job_modify has been called from Slurm! uid={}", now, submit_uid);
+    match result {
+        Ok(_) => {},
+        Err(_) => return -1,
+    };
     0
 }
-
-
-
-
-
-
-
-
 
 // #[cfg(test)]
 // mod tests {
