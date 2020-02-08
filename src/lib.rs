@@ -69,6 +69,16 @@ pub extern "C" fn job_modify(_job_desc: *mut c_void, _job_ptr: *mut c_void,
     SLURM_SUCCESS
 }
 
+#[no_mangle]
+pub extern "C" fn fini() {
+}
+
+#[no_mangle]
+pub extern "C" fn init() -> c_int {
+    SLURM_SUCCESS
+}
+
+
 // #[cfg(test)]
 // mod tests {
 //     #[test]
