@@ -6,7 +6,7 @@ edition = "2018"
 
 
 [lib]
-name = "job_submit_rustraw"
+name = "job_submit_rust"
 crate-type = ["cdylib"]
 # crate-type = ["dylib"]
 # https://doc.rust-lang.org/cargo/reference/manifest.html#building-dynamic-or-static-libraries

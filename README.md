@@ -14,9 +14,9 @@ script will require sudo access).
 
 In _slurm.conf_, specify the plugin like so:
 
-    JobSubmitPlugins=rustraw
+    JobSubmitPlugins=rust
 
-When the slurmctld start ups, it will look for _job_submit_rustraw.so_ at either
+When the slurmctld start ups, it will look for _job_submit_rust.so_ at either
 _<PREFIX>/lib/slurm_ or at `<PluginDir>` as specified by slurm.conf (which is
 _/usr/local/lib/slurm_ if unspecified).
 

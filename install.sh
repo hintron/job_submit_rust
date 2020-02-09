@@ -8,8 +8,8 @@
 # Input: Slurm's build prefix
 prefix="$1"
 
-name="job_submit_rustraw.so"
-target="./target/debug/libjob_submit_rustraw.so"
+name="job_submit_rust.so"
+target="./target/debug/libjob_submit_rust.so"
 default_plugin_dir="/usr/local/lib/slurm"
 target_destination=$default_plugin_dir
 
