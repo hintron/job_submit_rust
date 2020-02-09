@@ -1,5 +1,5 @@
 # job_submit_rust
-Create a simple "hello world" Rust job submit plugin.
+A simple Slurm job submit plugin skeleton written in Rust.
 
 # Build and install instructions
 
@@ -18,8 +18,19 @@ In _slurm.conf_, specify the plugin like so:
 
 When the slurmctld start ups, it will look for _job_submit_rust.so_ at either
 _<PREFIX>/lib/slurm_ or at `<PluginDir>` as specified by slurm.conf (which is
-_/usr/local/lib/slurm_ if unspecified).
+_/usr/local/lib/slurm_ if unspecified). Make sure the install script put it in
+the correct location.
 
+# Logging
+
+The `log_file()` macro will by default print to _job_submit_rust.log_ in the
+same location as where slurmctld.log resides. The file name is set with the
+`JOB_SUBMIT_FILE` const. This file will be created if it doesn't already exist,
+and all prints will be appended.
+
+The local system's date and time will also be printed, along with a custom
+prefix. The prefix is set with the `LOG_PREFIX` const. Note that `log_file()`
+is variadic (i.e. like `printf()`).
 
 # Known issues
 
