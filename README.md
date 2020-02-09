@@ -30,4 +30,7 @@ SIGBUS. It doesn't like the fact that the file got replaced from under it.
 Currently, `job_desc_msg_t` and `job_record_t` are not fully implemented. The
 plan is to gradually implement the important fields and structures so that there
 are no external dependencies, while leaving the unused pointers to structs as
-void pointers and prepending "_" to the field.
+void pointers and prepending "\_" to the field.
+
+`fini()` is only called when the slurmctld exits if Slurm is configured with
+`--enable-memory-leak-debug`.
